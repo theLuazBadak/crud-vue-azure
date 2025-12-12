@@ -7,7 +7,7 @@ const route = useRoute();
 
 const menuItems = [
     {name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    {name: 'Clientes', path: '/personas', icon: Users },
+    {name: 'Personas', path: '/personas', icon: Users },
     // {name: 'Reportes', path: '/reportes', icon: PieChart },
     // {name: 'Configuración', path: '/settings', icon: Settings },
 ];
