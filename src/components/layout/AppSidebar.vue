@@ -1,18 +1,38 @@
 <script setup lang="ts">
 
-import { RouterLink, useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { LayoutDashboard, Users, LogOut } from 'lucide-vue-next'
+import { useMicrofrontendStore } from '@/stores/microfrontend';
 
+const router = useRouter();
 const route = useRoute();
+const mfStore = useMicrofrontendStore();
+
+const handleClick = (item: any) => {
+    if(item.type === 'internal') {
+        mfStore.clear()
+        router.push(item.path)
+    } else {
+        mfStore.setExternal(item.url)
+        router.push('/')
+    }
+}
+
+const isActiveItem = (item:any) => {
+    if(item.type === 'external'){
+        return mfStore.currentUrl === item.url
+    }
+    return route.path === item.path && !mfStore.currentUrl
+}
 
 const menuItems = [
-    {name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    {name: 'Personas', path: '/personas', icon: Users },
-    // {name: 'Reportes', path: '/reportes', icon: PieChart },
+    {name: 'Dashboard', type:'internal',  path: '/', icon: LayoutDashboard },
+    {name: 'Personas', type:'internal',  path: '/personas', icon: Users },
+    {name: 'Responsys', type:'external',  url: 'https://wonderful-ground-09f55cc1e.3.azurestaticapps.net', icon: Users },
     // {name: 'Configuración', path: '/settings', icon: Settings },
 ];
 
-const isActive = (path:string) => route.path === path || (path !== '/' && route.path.startsWith(path))
+
 </script>
 
 <template>
@@ -24,17 +44,17 @@ const isActive = (path:string) => route.path === path || (path !== '/' && route.
         </div>
 
         <nav class="flex-1 py-6 px-3 space-y-1">
-            <RouterLink
+            <div
                 v-for="item in menuItems"
-                :key="item.path"
-                :to="item.path"
+                :key="item.name"
+                @click="handleClick(item)"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group"
-                :class="isActive(item.path)
+                :class="isActiveItem(item)
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'"
             >
             <span class="font-medium text-sm">{{ item.name }}</span>
-            </RouterLink>
+        </div>
         </nav>
 
         <div class="p-4 border-t border-slate-800">
