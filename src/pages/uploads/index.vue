@@ -11,12 +11,9 @@ function onFileChange(e: Event) {
   const target = e.target as HTMLInputElement
   if (!target.files || !target.files.length) return
 
-  const selectedFile = target.files[0]
-  if (selectedFile) {
-    file.value = selectedFile
-    error.value = null
-    success.value = false
-  }
+  file.value = target.files.item(0)
+  error.value = null
+  success.value = false
 }
 
 async function upload() {
@@ -27,17 +24,30 @@ async function upload() {
 
   uploading.value = true
   error.value = null
+  success.value = false
 
   try {
     const selectedFile = file.value
+
     const { uploadUrl } = await getSasUrl(selectedFile.name)
 
-    // Aquí SOLO probamos SAS (aún no subimos)
-    console.log('SAS OK:', uploadUrl)
+    const res = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'x-ms-blob-type': 'BlockBlob',
+        'Content-Type': selectedFile.type || 'application/octet-stream'
+      },
+      body: selectedFile
+    })
+
+    if (!res.ok) {
+      throw new Error('Error al subir el archivo a Blob Storage')
+    }
 
     success.value = true
   } catch (e) {
-    error.value = 'Error obteniendo SAS.'
+    console.error(e)
+    error.value = 'Error al subir el archivo.'
   } finally {
     uploading.value = false
   }
@@ -66,7 +76,7 @@ async function upload() {
         :disabled="uploading"
         class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
       >
-        {{ uploading ? 'Obteniendo permiso…' : 'Solicitar permiso (SAS)' }}
+        {{ uploading ? 'Subiendo…' : 'Subir archivo' }}
       </button>
 
       <p v-if="error" class="text-sm text-red-600">
@@ -74,7 +84,7 @@ async function upload() {
       </p>
 
       <p v-if="success" class="text-sm text-green-600">
-        SAS obtenido correctamente. Revisa la consola.
+        Archivo subido correctamente a Azure Blob Storage.
       </p>
     </div>
   </div>
