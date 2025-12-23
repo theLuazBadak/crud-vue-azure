@@ -13,6 +13,11 @@ export const router = createRouter ({
             name: 'Personas',
             component: () => import('@/pages/personas/index.vue')
         },
+        {
+            path: '/uploads',
+            name: 'Uploads',
+            component: () => import('@/pages/uploads/index.vue')
+        },
     ]
 
 });

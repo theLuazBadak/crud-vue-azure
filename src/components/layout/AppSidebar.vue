@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { useRouter, useRoute } from 'vue-router';
-import { LayoutDashboard, Users, LogOut } from 'lucide-vue-next'
+import { LayoutDashboard, Users, LogOut, Upload } from 'lucide-vue-next'
 import { useMicrofrontendStore } from '@/stores/microfrontend';
 
 const router = useRouter();
@@ -28,8 +28,8 @@ const isActiveItem = (item:any) => {
 const menuItems = [
     {name: 'Dashboard', type:'internal',  path: '/', icon: LayoutDashboard },
     {name: 'People', type:'internal',  path: '/personas', icon: Users },
+    {name: 'Upload Excel', type:'internal', path: '/uploads', icon: Upload },
     {name: 'Responsys', type:'external',  url: 'https://wonderful-ground-09f55cc1e.3.azurestaticapps.net', icon: Users },
-    // {name: 'Configuración', path: '/settings', icon: Settings },
 ];
 
 
