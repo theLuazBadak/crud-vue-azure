@@ -1,9 +1,10 @@
+const USE_MOCK = false
 import type { Persona } from "@/types/persona"
 import { mockPersonas } from "@/mock/personas"
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
-const USE_MOCK = false
+const API_BASE = '/api/personas'
 
 export const personasService = {
   async getAll(): Promise<Persona[]> {
@@ -12,7 +13,7 @@ export const personasService = {
       return [...mockPersonas]
     }
 
-    const res = await fetch('/personas')
+    const res = await fetch(API_BASE)
     return await res.json()
   },
 
@@ -22,7 +23,7 @@ export const personasService = {
       return mockPersonas.find(p => p.id === id)
     }
 
-    const res = await fetch(`/personas/${id}`)
+    const res = await fetch(`${API_BASE}/${id}`)
     return await res.json()
   },
 
@@ -34,7 +35,7 @@ export const personasService = {
       return newPersona
     }
 
-    const res = await fetch('/personas', {
+    const res = await fetch(API_BASE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -54,7 +55,7 @@ export const personasService = {
       return updated
     }
 
-    const res = await fetch(`/personas/${id}`, {
+    const res = await fetch(`${API_BASE}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -71,6 +72,6 @@ export const personasService = {
       return
     }
 
-    await fetch(`/personas/${id}`, { method: 'DELETE' })
+    await fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
   }
 }
