@@ -3,10 +3,22 @@ module.exports = async function (context, req) {
   const method = req.method.toUpperCase()
   const id = context.bindingData.id
 
-  context.log('--- personas function ---')
-  context.log('method:', method)
-  context.log('id:', id)
-  context.log('API_URL:', API_URL)
+  if (req.query?.debug === '1') {
+    context.res = {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {
+        debug: true,
+        API_URL,
+        method,
+        id,
+        envExists: !!API_URL
+      }
+    }
+    return
+  }
 
   let url = null
 
@@ -30,32 +42,20 @@ module.exports = async function (context, req) {
     url = `${API_URL}/eliminar/cliente/${id}`
   }
 
-  context.log('final url:', url)
-
   if (!url) {
     context.res = { status: 404, body: 'Ruta no soportada' }
     return
   }
 
-  let res
-  try {
-    res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: ['GET', 'DELETE'].includes(method)
-        ? undefined
-        : JSON.stringify(req.body)
-    })
-  } catch (err) {
-    context.log('FETCH ERROR:', err)
-    context.res = { status: 500, body: 'Error al contactar backend' }
-    return
-  }
- 
-  const data = await res.text()
+  const res = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: ['GET', 'DELETE'].includes(method)
+      ? undefined
+      : JSON.stringify(req.body)
+  })
 
-  context.log('backend status:', res.status)
-  context.log('backend response:', data)
+  const data = await res.text()
 
   context.res = {
     status: res.status,
