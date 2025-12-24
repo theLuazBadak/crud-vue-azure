@@ -1,10 +1,13 @@
-const USE_MOCK = false
 import type { Persona } from "@/types/persona"
 import { mockPersonas } from "@/mock/personas"
 
+const USE_MOCK = false
+
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
-const API_BASE = '/api/personas'
+const PROXY_URL =
+  import.meta.env.VITE_PERSONAS_PROXY_URL ||
+  'http://localhost:7071/api/personas-proxy' 
 
 export const personasService = {
   async getAll(): Promise<Persona[]> {
@@ -13,7 +16,8 @@ export const personasService = {
       return [...mockPersonas]
     }
 
-    const res = await fetch(API_BASE)
+    const res = await fetch(PROXY_URL)
+    if (!res.ok) throw new Error('Error al obtener personas')
     return await res.json()
   },
 
@@ -23,7 +27,8 @@ export const personasService = {
       return mockPersonas.find(p => p.id === id)
     }
 
-    const res = await fetch(`${API_BASE}/${id}`)
+    const res = await fetch(`${PROXY_URL}?id=${id}`)
+    if (!res.ok) throw new Error('Error al obtener persona')
     return await res.json()
   },
 
@@ -35,12 +40,13 @@ export const personasService = {
       return newPersona
     }
 
-    const res = await fetch(API_BASE, {
+    const res = await fetch(PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
 
+    if (!res.ok) throw new Error('Error al crear persona')
     return await res.json()
   },
 
@@ -50,17 +56,18 @@ export const personasService = {
       const index = mockPersonas.findIndex(p => p.id === id)
       if (index === -1) throw new Error('Persona no encontrada')
 
-      const updated: Persona = { ...mockPersonas[index], ...data } as Persona
+      const updated = { ...mockPersonas[index], ...data } as Persona
       mockPersonas[index] = updated
       return updated
     }
 
-    const res = await fetch(`${API_BASE}/${id}`, {
+    const res = await fetch(`${PROXY_URL}?id=${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
 
+    if (!res.ok) throw new Error('Error al actualizar persona')
     return await res.json()
   },
 
@@ -72,6 +79,10 @@ export const personasService = {
       return
     }
 
-    await fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
+    const res = await fetch(`${PROXY_URL}?id=${id}`, {
+      method: 'DELETE'
+    })
+
+    if (!res.ok) throw new Error('Error al eliminar persona')
   }
 }

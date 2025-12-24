@@ -3,23 +3,6 @@ module.exports = async function (context, req) {
   const method = req.method.toUpperCase()
   const id = context.bindingData.id
 
-  if (req.query?.debug === '1') {
-    context.res = {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: {
-        debug: true,
-        API_URL,
-        method,
-        id,
-        envExists: !!API_URL
-      }
-    }
-    return
-  }
-
   let url = null
 
   if (method === 'GET' && !id) {
@@ -33,7 +16,7 @@ module.exports = async function (context, req) {
   if (method === 'POST') {
     url = `${API_URL}/registrar/cliente`
   }
-
+ 
   if (method === 'PUT' && id) {
     url = `${API_URL}/actualizar/cliente/${id}`
   }
