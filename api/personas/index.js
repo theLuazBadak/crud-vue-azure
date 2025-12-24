@@ -16,7 +16,7 @@ module.exports = async function (context, req) {
   if (method === 'POST') {
     url = `${API_URL}/registrar/cliente`
   }
-
+ 
   if (method === 'PUT' && id) {
     url = `${API_URL}/actualizar/cliente/${id}`
   }
