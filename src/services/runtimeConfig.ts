@@ -1,25 +1,25 @@
-type RuntimeConfig = {
-  apiUrl: string | null
-  useMock: boolean
-}
+// type RuntimeConfig = {
+//   apiUrl: string | null
+//   useMock: boolean
+// }
 
-let cachedConfig: RuntimeConfig | null = null
+// let cachedConfig: RuntimeConfig | null = null
 
-export async function getRuntimeConfig(): Promise<RuntimeConfig> {
-  if (cachedConfig) return cachedConfig
+// export async function getRuntimeConfig(): Promise<RuntimeConfig> {
+//   if (cachedConfig) return cachedConfig
 
-  const res = await fetch('/api/config')
-  if (!res.ok) {
-    cachedConfig = { apiUrl: null, useMock: true }
-    return cachedConfig
-  }
+//   const res = await fetch('/api/config')
+//   if (!res.ok) {
+//     cachedConfig = { apiUrl: null, useMock: true }
+//     return cachedConfig
+//   }
 
-  const data = await res.json()
+//   const data = await res.json()
 
-  cachedConfig = {
-    apiUrl: data.API_URL ?? null,
-    useMock: Boolean(data.USE_MOCK),
-  }
+//   cachedConfig = {
+//     apiUrl: data.API_URL ?? null,
+//     useMock: Boolean(data.USE_MOCK),
+//   }
 
-  return cachedConfig
-}
+//   return cachedConfig
+// }
