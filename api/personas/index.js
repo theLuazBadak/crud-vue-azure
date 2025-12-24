@@ -51,7 +51,7 @@ module.exports = async function (context, req) {
     context.res = { status: 500, body: 'Error al contactar backend' }
     return
   }
-
+ 
   const data = await res.text()
 
   context.log('backend status:', res.status)
